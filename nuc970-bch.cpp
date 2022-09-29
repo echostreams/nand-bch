@@ -341,6 +341,7 @@ extern "C" {
 	void decode_bch();
 	int nuc970_convert_data(NUC970FmiState* fmi, unsigned char* page, int field_index, int oob_size, int error_bits);
 	void post_decode(NUC970FmiState* fmi, int field_index);
+	void print_hex_low(int length, int Binary_data[], FILE* std);
 }
 
 /*-----------------------------------------------------------------------------
@@ -650,11 +651,11 @@ int libbch_verify_pages()
 {
 	uint8_t* test_pages[] = {	// 2048 + 64
 		nuc970_nand_sample_page1,
-		nuc970_nand_sample_page2
+		//nuc970_nand_sample_page2
 	};
 	int i, j;
 	int page, field_index;
-	struct bch_control* bch = bch_init(15, 4, /*0xc001*/0, false);
+	struct bch_control* bch = bch_init(15, 4, 0xc001, false);
 	if (!bch)
 		return -1;
 
@@ -663,7 +664,7 @@ int libbch_verify_pages()
 			uint8_t sector[512 + 24];
 			uint8_t ecc[8];
 			memset(sector, 0, 512 + 24);
-			memset(ecc, 0xff, 8);
+			memset(ecc, 0, 8);
 			memcpy(sector, &test_pages[page][field_index * 512], 512);
 			if (field_index == 0) {
 				sector[512 + 0] = 0xff;
@@ -690,6 +691,27 @@ int libbch_verify_pages()
 			for (i = 0; i < 8; i++)
 				printf(" %02x", ecc[i]);
 			printf("\n");
+			
+			int eccbits[60];
+			for (i = 0; i < 8; i++) {
+				for (j = 0; j < 8; j++) {
+					if (i * 8 + j < 60)
+						eccbits[i * 8 + j] = ecc[i] >> (7 - j) & 0x01;
+				}
+			}
+
+			i = 0;
+			j = 60 - 1;
+			while (i < j)
+			{
+				int Temp = eccbits[i];
+				eccbits[i] = eccbits[j];
+				eccbits[j] = Temp;
+				i++;
+				j--;
+			}
+			print_hex_low(60, eccbits, stdout);
+			printf("\n");
 		}
 	}
 	bch_free(bch);
@@ -698,8 +720,9 @@ int libbch_verify_pages()
 
 int main(int argc, char** argv)
 {
-	//return verify_pages();
-	//return correct_pages();
-	return libbch_verify_pages();
+	//return 
+	verify_pages();
+	return correct_pages();
+	//return libbch_verify_pages(); // not working
 	//return 0;
 }

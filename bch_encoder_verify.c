@@ -388,8 +388,8 @@ void parallel_encode_bch(unsigned char* input_ra_data)
     kk_shorten += data_pad_size;  // temporarily, extend kk_shorten to include padding 0
 
     //
-    print_hex_low(kk_shorten, data, stdout);
-    printf("\n\n");
+    //print_hex_low(kk_shorten, data, stdout);
+    //printf("\n\n");
 
     i = 0;
     j = NTC_DATA_FULL_SIZE - 1;   // always invert (raw data + padding data)
@@ -628,8 +628,8 @@ int calculate_BCH_parity_in_field(
             *      6. modify output format in order to compare to chip data easier.
             *              output raw data (no inverting and padding) and parity with Nuvoton style.
             *---------------------------------------------------------------------------*/
-            //print_hex_low(NTC_DATA_FULL_SIZE, data, stdout);
-            //fprintf(stdout, "\n");
+            print_hex_low(NTC_DATA_FULL_SIZE, data, stdout);
+            fprintf(stdout, "\n");
 #else
             print_hex_low(kk_shorten, data, stdout);
 #endif
@@ -670,6 +670,7 @@ int nuc970_convert_data(NUC970FmiState* fmi, unsigned char* page, int field_inde
     int i, j, iii;
     int eccbytes;
     unsigned char* input_ra_data = &page[2048];
+    // copy parity codes to NANDRA for correction
     for (i = 0; i < oob_size; i++) {
         fmi->FMI_NANDRA[i] = ((uint32_t*)input_ra_data)[i];
     }
