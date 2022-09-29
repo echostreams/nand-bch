@@ -654,7 +654,7 @@ int libbch_verify_pages()
 	};
 	int i, j;
 	int page, field_index;
-	struct bch_control* bch = bch_init(15, 4, 0xc001, false);
+	struct bch_control* bch = bch_init(15, 4, /*0xc001*/0, false);
 	if (!bch)
 		return -1;
 
@@ -682,7 +682,10 @@ int libbch_verify_pages()
 				i++;
 				j--;
 			}
-			
+			for (i = 0; i < 512 + 24; i++) {
+				printf("%02X", sector[i]);				
+			}
+			printf("\n");
 			bch_encode(bch, sector, 512 + 24, ecc);
 			for (i = 0; i < 8; i++)
 				printf(" %02x", ecc[i]);
