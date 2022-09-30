@@ -726,9 +726,9 @@ int nuc970_convert_data(NUC970FmiState* fmi, unsigned char* page, int field_inde
         }
     }
 
-    //
-    //print_hex_low(NTC_DATA_FULL_SIZE, recd, stdout);
-    //printf("\n\n");
+    printf("-----\n");
+    print_hex_low(rr + NTC_DATA_FULL_SIZE, recd, stdout);
+    printf("\n\n");
 
     i = 0;
     j = NTC_DATA_FULL_SIZE - 1;   // always invert (raw data + padding data)
@@ -770,8 +770,8 @@ int nuc970_convert_data(NUC970FmiState* fmi, unsigned char* page, int field_inde
         j--;
     }
 
-    //
-    print_hex_low(NTC_DATA_FULL_SIZE + eccbytes * 8, recd, stdout);
+    printf("-> nuc970_convert_data\n");
+    print_hex_low(NTC_DATA_FULL_SIZE + rr, recd, stdout);
     printf("\n\n");
 
     return 0;

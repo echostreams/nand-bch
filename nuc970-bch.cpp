@@ -329,7 +329,15 @@ unsigned long calculate_checksum(unsigned char* data, int length, unsigned long 
 	return current_checksum;
 }
 
-extern "C" {
+extern "C" {	
+	extern int df_t, df_m, df_p;
+	extern int mm, nn, rr, tt;
+	extern int kk_shorten, nn_shorten;
+	extern int ttx2;
+	extern int Parallel;
+	extern int ntc_data_size;     // the bit size for one data segment
+	extern int data_pad_size;     // the bit length to padding 0, value base on BCH type
+
 	int calculate_BCH_parity_in_field(
 		unsigned char* input_data,
 		unsigned char* input_ra_data,
@@ -342,6 +350,9 @@ extern "C" {
 	int nuc970_convert_data(NUC970FmiState* fmi, unsigned char* page, int field_index, int oob_size, int error_bits);
 	void post_decode(NUC970FmiState* fmi, int field_index);
 	void print_hex_low(int length, int Binary_data[], FILE* std);
+	void generate_gf();
+
+	void gen_poly();
 }
 
 /*-----------------------------------------------------------------------------
@@ -475,7 +486,7 @@ int verify_pages()
 {
 	uint8_t* test_pages[] = {	// 2048 + 64
 		nuc970_nand_sample_page1,
-		nuc970_nand_sample_page2
+		//nuc970_nand_sample_page2
 	};
 	int need_initial = 1;
 
@@ -497,11 +508,13 @@ int verify_pages()
 		hex_dump(std::vector<uint8_t>(std::begin(ra_data), std::end(ra_data)), std::cout);
 
 		// compare ecc bytes
-		if (memcmp(ra_data + 32, &(test_pages[i])[2048 + 32], 32) == 0)
+		int cmpres = memcmp(ra_data + 32, &(test_pages[i])[2048 + 32], 32);
+		if (cmpres == 0)
 			std::cout << "  OK" << std::endl;
 		else {
 			std::cout << "  FAILED" << std::endl;
 		}
+		assert(cmpres == 0);
 	}
 	return 0;
 }
@@ -718,11 +731,62 @@ int libbch_verify_pages()
 	return 0;
 }
 
+int decode_test(unsigned char* page)
+{
+	int field_index;
+	NUC970FmiState fmi;
+	memset(&fmi, 0, sizeof(NUC970FmiState));
+	fmi.FMI_NANDCTL = BCH_T4 | (0x01 << 16);	// BCH_T4 encode/decode for 2048 bytes/page
+	fmi.FMI_NANDRACTL = 0x40;	// 64 bytes redundant area
+
+	//--- really do BCH decoding
+	ntc_data_size = 512 * 8;
+	data_pad_size = 24 * 8;
+	mm = df_m;
+	tt = df_t;
+	if (tt == 4)
+		Parallel = 32 /*8*/;
+	else
+		Parallel = 64 /*8*/;
+
+	nn = (int)pow(2, mm) - 1;
+	kk_shorten = 4096;
+
+	// generate the Galois Field GF(2**mm)
+	generate_gf();
+
+	// Compute the generator polynomial and lookahead matrix for BCH code
+	gen_poly();
+
+	// Check if code is shortened
+	nn_shorten = kk_shorten + rr;
+
+	for (field_index = 0; field_index < 4; field_index++) {
+		printf("==== field: %d ====\n", field_index);
+		nuc970_convert_data(&fmi, page, field_index, 64, 4);
+		decode_bch();
+		post_decode(&fmi, field_index);
+	}
+
+	fmiSMCorrectData(&fmi, page);
+
+	for (int j = 0; j < 16; j++) {
+		printf(" %08x", fmi.FMI_NANDRA[j]);
+	}
+	printf("\n");
+
+	assert(page[0] == 0x00);
+	assert(page[31] == 0x00);
+	assert(fmi.FMI_NANDRA[0] == 0x0000ffff);
+	assert(fmi.FMI_NANDRA[8] == 0x168c6259);
+	return 0;
+}
+
 int main(int argc, char** argv)
 {
-	//return 
 	verify_pages();
-	return correct_pages();
-	//return libbch_verify_pages(); // not working
-	//return 0;
+	//correct_pages();
+	//libbch_verify_pages(); // not working
+	decode_test(nuc970_nand_sample_page3);
+	return 0;
 }
