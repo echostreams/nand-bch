@@ -109,6 +109,8 @@ void fmiSM_CorrectData_BCH(NUC970FmiState* fmi, uint8_t ucFieidIndex, uint8_t uc
 	uint32_t total_field_num;
 	uint8_t* smra_index;
 
+	std::cout << " Field: " << ucFieidIndex - 1 << ", Errors: " << (int)ucErrorCnt << std::endl;
+
 	//--- assign some parameters for different BCH and page size
 	switch (fmi->FMI_NANDCTL & 0x007C0000)
 	{
@@ -290,7 +292,6 @@ int fmiSMCorrectData(NUC970FmiState* fmi, uint8_t* uDAddr)
 	}
 	return uErrorCnt;
 }
-
 
 /*-----------------------------------------------------------------------------------*
  * Definition for self-defined Macro.
@@ -784,7 +785,7 @@ int decode_test(unsigned char* page)
 
 int main(int argc, char** argv)
 {
-	verify_pages();
+	//verify_pages();
 	//correct_pages();
 	//libbch_verify_pages(); // not working
 	decode_test(nuc970_nand_sample_page3);

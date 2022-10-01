@@ -7,7 +7,8 @@
 #define tt_max  24          /* Number of errors that can be corrected */   
 
 #define kk_max  32768       /* Length of information bit, kk = nn - rr  */
-#define rr_max  1000        /* Number of parity checks, rr = deg[g(x)] */
+//#define rr_max  1000        /* Number of parity checks, rr = deg[g(x)] */
+#define rr_max 360
 #define parallel_max  64 /*32*/    /* Number of parallel encoding/syndrome computations */
 #define DEBUG  0
 

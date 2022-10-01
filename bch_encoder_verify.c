@@ -840,7 +840,7 @@ void post_decode(NUC970FmiState *fmi, int field_index)
             fprintf(stdout, "}\n");
             free(byte_err_locations);
             free(byte_err_datas);
-            fmi->FMI_NANDECCES[field_index / 4] |= ((byte_err_count << 2) | 0x01) << (field_index % 4);
+            fmi->FMI_NANDECCES[field_index / 4] |= ((byte_err_count << 2) | 0x01) << ((field_index % 4) * 8);
             
             printf("\n");
         }
