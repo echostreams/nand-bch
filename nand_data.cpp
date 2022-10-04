@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <iomanip>
 
+#include <assert.h>
+
 #include "x_bch/ecclib.h"
 
 using namespace std;
@@ -422,7 +424,7 @@ int calculate_BCH_parity(
     int field_index, field_parity_size, field_size, field_count;
     int protect_3B;
     int bch_error_bits, nvt_ra_size;
-    int result;
+    //int result;
     unsigned char bch_parity_buffer[512];
     unsigned char* parity_location_in_ra;
 
@@ -530,7 +532,7 @@ int main(int argc, char* argv[])
 	/* default primitive polynomials */
 	static const unsigned int prim_poly_tab[] = {
 		0x25, 0x43, 0x83, 0x11d, 0x211, 0x409, 0x805, 0x1053, 0x201b,
-		0x402b, 0x8003, 0x8011, 0x8017, 65533
+		0x402b, 0x8003
 	};
 
 	for (n = 0; n < (sizeof(prim_poly_tab)/sizeof(unsigned int)); n++) {
@@ -591,10 +593,10 @@ int main(int argc, char* argv[])
 	}
 
 	//DATA_BITS = 4096, T = 3, BITS = 8, GP(2 ^ 13)
-	struct bch_control* bch2 = bch_init(10, 4, 0x409, false);
+	struct bch_control* bch2 = bch_init(13, 3, 0, false);
 
 	uint8_t test_ecc[OOB_ECC_LEN];
-	memset(test_ecc, 0, OOB_ECC_LEN);
+	memset(test_ecc, 0xff, OOB_ECC_LEN);
 	bch_encode(bch2, test2_bin, 512, test_ecc);
 	for (int j = 0; j < OOB_ECC_LEN; j++)
 		printf(" %02x", test_ecc[j]);
@@ -618,6 +620,30 @@ int main(int argc, char* argv[])
         ra_FFs, // ra_data,
         1   // bch_need_initial
     );
+
+    //DATA_BITS = 192, T = 8, BITS = 8, GP(2 ^ 9)
+    struct bch_control* bch3 = bch_init(9, 8, 0, false);
+
+    uint8_t test_ecc3[9];
+    memset(test_ecc3, 0x00, 9);
+    uint8_t test_data3[] = { 
+        0x12,0x34,0x56,0x78,0x9A,0xBC,0xDE,0xF0,
+        0x12,0x34,0x56,0x78,0x9A,0xBC,0xDE,0xF0,
+        0x12,0x34,0x56,0x78,0x9A,0xBC,0xDE,0xF1 };
+    bch_encode(bch3, test_data3, 24, test_ecc3);
+    for (int j = 0; j < 9; j++)
+        printf(" %02x", test_ecc3[j]);
+    printf("\n");
+    assert(test_ecc3[0] == 0x6f);
+    assert(test_ecc3[1] == 0xe0);
+    assert(test_ecc3[2] == 0xbf);
+    assert(test_ecc3[3] == 0x6e);
+    assert(test_ecc3[4] == 0x0e);
+    assert(test_ecc3[5] == 0x61);
+    assert(test_ecc3[6] == 0xeb);
+    assert(test_ecc3[7] == 0xfd);
+    assert(test_ecc3[8] == 0x51);
+    bch_free(bch3);
 
 	return 0;
 }

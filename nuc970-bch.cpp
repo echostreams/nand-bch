@@ -3,10 +3,10 @@
  * Adjustable NAND page sizes.
  * (512B+spare area, 2048B+spare area, 4096B+spare area and 8192B+spare area).
  * Support up to 4bit/8bit/12bit/15bit/24bit hardware ECC calculation circuit
- * By reading ECC_FLD_IF (FMI_NANDINTSTS[2]) to check the error occurrence while by reading 
+ * By reading ECC_FLD_IF (FMI_NANDINTSTS[2]) to check the error occurrence while by reading
  * FMI_NANDECCES0, FMI_NANDECCES1, FMI_NANDECCES2 and FMI_NANDECCES3 to know how many errors and if
- * those errors are correctable or not. If those errors are correctable, please read 
- * FMI_NANDECCEAx and FMI_NANDECCEDx to correct the errors manually. 
+ * those errors are correctable or not. If those errors are correctable, please read
+ * FMI_NANDECCEAx and FMI_NANDECCEDx to correct the errors manually.
  */
 
 #include <stdio.h>
@@ -51,10 +51,10 @@ vector<unsigned int> randperm(int n, int k) // like the matlab/octave function
 }
 
 
- /*-----------------------------------------------------------------------------
-  * Define some constants for BCH
-  *---------------------------------------------------------------------------*/
-  // define the total padding bytes for 512/1024 data segment
+/*-----------------------------------------------------------------------------
+ * Define some constants for BCH
+ *---------------------------------------------------------------------------*/
+ // define the total padding bytes for 512/1024 data segment
 #define BCH_PADDING_LEN_512     32
 #define BCH_PADDING_LEN_1024    64
 // define the BCH parity code lenght for 512 bytes data pattern
@@ -199,16 +199,16 @@ void fmiSM_CorrectData_BCH(NUC970FmiState* fmi, uint8_t ucFieidIndex, uint8_t uc
 	for (ii = 0; ii < ucErrorCnt; ii++)
 	{
 
-		std::cout << " >> fmiSM: " << std::dec << (int)ucFieidIndex << " " 
+		std::cout << " >> fmiSM: " << std::dec << (int)ucFieidIndex << " "
 			<< uaAddr[ii] << "/" << std::hex << (int)uaData[ii] << std::endl;
 
 		// for wrong data in field
 		if (uaAddr[ii] < field_len)
 		{
-			std::cout << " << " << std::setfill('0') << std::setw(2) 
+			std::cout << " << " << std::setfill('0') << std::setw(2)
 				<< std::hex << (int)*(pDAddr + uaAddr[ii]) << std::endl;
 			*(pDAddr + uaAddr[ii]) ^= uaData[ii];
-			std::cout << " >> " << std::setfill('0') << std::setw(2) << std::hex 
+			std::cout << " >> " << std::setfill('0') << std::setw(2) << std::hex
 				<< (int)*(pDAddr + uaAddr[ii]) << std::endl;
 		}
 		// for wrong first-3-bytes in redundancy area
@@ -330,7 +330,7 @@ unsigned long calculate_checksum(unsigned char* data, int length, unsigned long 
 	return current_checksum;
 }
 
-extern "C" {	
+extern "C" {
 	extern int df_t, df_m, df_p;
 	extern int mm, nn, rr, tt;
 	extern int kk_shorten, nn_shorten;
@@ -625,113 +625,6 @@ int correct_pages()
 	return 0;
 }
 
-static u8 swap_bits_tbl[] = {
-	0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-	0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
-	0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
-	0x18, 0x98, 0x58, 0xd8, 0x38, 0xb8, 0x78, 0xf8,
-	0x04, 0x84, 0x44, 0xc4, 0x24, 0xa4, 0x64, 0xe4,
-	0x14, 0x94, 0x54, 0xd4, 0x34, 0xb4, 0x74, 0xf4,
-	0x0c, 0x8c, 0x4c, 0xcc, 0x2c, 0xac, 0x6c, 0xec,
-	0x1c, 0x9c, 0x5c, 0xdc, 0x3c, 0xbc, 0x7c, 0xfc,
-	0x02, 0x82, 0x42, 0xc2, 0x22, 0xa2, 0x62, 0xe2,
-	0x12, 0x92, 0x52, 0xd2, 0x32, 0xb2, 0x72, 0xf2,
-	0x0a, 0x8a, 0x4a, 0xca, 0x2a, 0xaa, 0x6a, 0xea,
-	0x1a, 0x9a, 0x5a, 0xda, 0x3a, 0xba, 0x7a, 0xfa,
-	0x06, 0x86, 0x46, 0xc6, 0x26, 0xa6, 0x66, 0xe6,
-	0x16, 0x96, 0x56, 0xd6, 0x36, 0xb6, 0x76, 0xf6,
-	0x0e, 0x8e, 0x4e, 0xce, 0x2e, 0xae, 0x6e, 0xee,
-	0x1e, 0x9e, 0x5e, 0xde, 0x3e, 0xbe, 0x7e, 0xfe,
-	0x01, 0x81, 0x41, 0xc1, 0x21, 0xa1, 0x61, 0xe1,
-	0x11, 0x91, 0x51, 0xd1, 0x31, 0xb1, 0x71, 0xf1,
-	0x09, 0x89, 0x49, 0xc9, 0x29, 0xa9, 0x69, 0xe9,
-	0x19, 0x99, 0x59, 0xd9, 0x39, 0xb9, 0x79, 0xf9,
-	0x05, 0x85, 0x45, 0xc5, 0x25, 0xa5, 0x65, 0xe5,
-	0x15, 0x95, 0x55, 0xd5, 0x35, 0xb5, 0x75, 0xf5,
-	0x0d, 0x8d, 0x4d, 0xcd, 0x2d, 0xad, 0x6d, 0xed,
-	0x1d, 0x9d, 0x5d, 0xdd, 0x3d, 0xbd, 0x7d, 0xfd,
-	0x03, 0x83, 0x43, 0xc3, 0x23, 0xa3, 0x63, 0xe3,
-	0x13, 0x93, 0x53, 0xd3, 0x33, 0xb3, 0x73, 0xf3,
-	0x0b, 0x8b, 0x4b, 0xcb, 0x2b, 0xab, 0x6b, 0xeb,
-	0x1b, 0x9b, 0x5b, 0xdb, 0x3b, 0xbb, 0x7b, 0xfb,
-	0x07, 0x87, 0x47, 0xc7, 0x27, 0xa7, 0x67, 0xe7,
-	0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
-	0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef,
-	0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff,
-};
-
-// using libbch to verify sample page 1&2
-int libbch_verify_pages()
-{
-	uint8_t* test_pages[] = {	// 2048 + 64
-		nuc970_nand_sample_page1,
-		//nuc970_nand_sample_page2
-	};
-	int i, j;
-	int page, field_index;
-	struct bch_control* bch = bch_init(15, 4, 0xc001, false);
-	if (!bch)
-		return -1;
-
-	for (page = 0; page < sizeof(test_pages) / sizeof(uint8_t*); page++) {
-		for (field_index = 0; field_index < 4; field_index++) {
-			uint8_t sector[512 + 24];
-			uint8_t ecc[8];
-			memset(sector, 0, 512 + 24);
-			memset(ecc, 0, 8);
-			memcpy(sector, &test_pages[page][field_index * 512], 512);
-			if (field_index == 0) {
-				sector[512 + 0] = 0xff;
-				sector[512 + 1] = 0xff;
-				sector[512 + 2] = 0x00;
-				sector[512 + 3] = 0x00;
-			}
-			// invert sector
-			i = 0;
-			j = 512 + 24 - 1;
-			while (i < j)
-			{
-				int Temp = swap_bits_tbl[sector[i]];
-				sector[i] = swap_bits_tbl[sector[j]];
-				sector[j] = Temp;
-				i++;
-				j--;
-			}
-			for (i = 0; i < 512 + 24; i++) {
-				printf("%02X", sector[i]);				
-			}
-			printf("\n");
-			bch_encode(bch, sector, 512 + 24, ecc);
-			for (i = 0; i < 8; i++)
-				printf(" %02x", ecc[i]);
-			printf("\n");
-			
-			int eccbits[60];
-			for (i = 0; i < 8; i++) {
-				for (j = 0; j < 8; j++) {
-					if (i * 8 + j < 60)
-						eccbits[i * 8 + j] = ecc[i] >> (7 - j) & 0x01;
-				}
-			}
-
-			i = 0;
-			j = 60 - 1;
-			while (i < j)
-			{
-				int Temp = eccbits[i];
-				eccbits[i] = eccbits[j];
-				eccbits[j] = Temp;
-				i++;
-				j--;
-			}
-			print_hex_low(60, eccbits, stdout);
-			printf("\n");
-		}
-	}
-	bch_free(bch);
-	return 0;
-}
-
 int decode_test(unsigned char* page)
 {
 	int field_index;
@@ -783,11 +676,117 @@ int decode_test(unsigned char* page)
 	return 0;
 }
 
+// using libbch to verify sample page 1&2
+int libbch_verify_pages()
+{
+	uint8_t* test_pages[] = {	// 2048 + 64
+		nuc970_nand_sample_page1,
+		nuc970_nand_sample_page2
+	};
+	int i;
+	int page, field_index;
+	struct bch_control* bch = bch_init(15, 4, 0x8003, false);
+	if (!bch)
+		return -1;
+
+	for (page = 0; page < sizeof(test_pages) / sizeof(uint8_t*); page++) {
+		for (field_index = 0; field_index < 4; field_index++) {
+			uint8_t sector[512 + 24];
+			uint8_t ecc[8];
+			memset(sector, 0, 512 + 24);
+			memset(ecc, 0, 8);
+			memcpy(sector, &test_pages[page][field_index * 512], 512);
+			if (field_index == 0) {
+				sector[512 + 0] = test_pages[page][2048 + 0];
+				sector[512 + 1] = test_pages[page][2048 + 1];
+				sector[512 + 2] = test_pages[page][2048 + 2];
+				sector[512 + 3] = test_pages[page][2048 + 3];
+			}
+
+			for (i = 0; i < 512 + 24; i++) {
+				printf("%02X", sector[i]);
+			}
+			printf("\n");
+			bch_encode(bch, sector, 512 + 24, ecc);
+			for (i = 0; i < 8; i++)
+				printf(" %02x", ecc[i]);
+			printf("\n");
+			assert(memcmp(ecc, &test_pages[page][2048 + 32 + field_index * 8], 8) == 0);
+		}
+	}
+	bch_free(bch);
+	printf("==== DONE ====\n");
+	return 0;
+}
+
+int libbch_decode_test(unsigned char* page)
+{
+	int i;
+	int field_index;
+	NUC970FmiState fmi;
+	memset(&fmi, 0, sizeof(NUC970FmiState));
+	fmi.FMI_NANDCTL = BCH_T4 | (0x01 << 16);	// BCH_T4 encode/decode for 2048 bytes/page
+	fmi.FMI_NANDRACTL = 0x40;	// 64 bytes redundant area
+	struct bch_control* bch = bch_init(15, 4, 0x8003, false);
+	assert(bch);
+
+	// copy parity codes to NANDRA for fmiSMCorrectData
+	for (i = 0; i < 64; i++) {
+		fmi.FMI_NANDRA[i] = ((uint32_t*)&page[2048])[i];
+	}
+
+	for (field_index = 0; field_index < 4; field_index++) {
+		uint8_t sector[512 + 24];
+		uint8_t ecc[8];
+		uint32_t errloc[4];
+		int errcnt = 0;
+		memset(sector, 0, 512 + 24);
+		memset(ecc, 0, 8);
+		memcpy(sector, &page[field_index * 512], 512);
+		if (field_index == 0) {
+			sector[512 + 0] = page[2048 + 0];
+			sector[512 + 1] = page[2048 + 1];
+			sector[512 + 2] = page[2048 + 2];
+			sector[512 + 3] = page[2048 + 3];
+		}
+		for (i = 0; i < 512 + 24; i++) {
+			printf("%02X", sector[i]);
+		}
+		printf("\n");
+		memcpy(ecc, &page[2048 + 32 + field_index * 8], 8);
+		errcnt = bch_decode(bch, sector, 512 + 24, ecc, NULL, NULL, errloc);
+		printf("field: %d, err: %d\n", field_index, errcnt);
+		if (errcnt) {
+			fmi.FMI_NANDINTSTS |= (1 << 2); // ECC_FLD_IF (ECC Field Check Error Interrupt Flag)
+			
+			for (int i = 0; i < errcnt; i++) {
+				fmi.FMI_NANDECCEA[field_index][i / 2] |= ((errloc[i] >> 3) & 0x7ff) << (16 * (i % 2));
+				fmi.FMI_NANDECCED[field_index][i / 4] |= (1 << (errloc[i] & 7)) << (8 * (i % 4));
+			}
+		}
+
+		fmi.FMI_NANDECCES[field_index / 4] |= ((errcnt << 2) | 0x01) << ((field_index % 4) * 8);
+	}
+	bch_free(bch);
+
+	fmiSMCorrectData(&fmi, page);
+	
+	assert(memcmp(&page[0], &nuc970_nand_sample_page1[0], 2048) == 0);
+	assert(memcmp(&fmi.FMI_NANDRA[0], &nuc970_nand_sample_page1[2048], 64) == 0);
+	
+	printf("==== DONE ====\n");
+	return 0;
+}
+
+
+
 int main(int argc, char** argv)
 {
 	//verify_pages();
 	//correct_pages();
-	//libbch_verify_pages(); // not working
-	decode_test(nuc970_nand_sample_page3);
+	//decode_test(nuc970_nand_sample_page3);
+
+	//libbch_verify_pages(); // working
+	libbch_decode_test(nuc970_nand_sample_page3);
 	return 0;
 }
