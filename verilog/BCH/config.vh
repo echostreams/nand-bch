@@ -1,7 +1,8 @@
 `ifndef _CONFIG_VH_
 `define _CONFIG_VH_
 
-`define CONFIG_HAS_CARRY4 1
+//`define CONFIG_HAS_CARRY4 1
+`define CONFIG_HAS_CARRY4 0
 `define CONFIG_PIPELINE_LFSR 1
 `define CONFIG_CONST_OP 1
 `define CONFIG_BERLEKAMP 0

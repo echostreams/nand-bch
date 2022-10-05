@@ -195,4 +195,5 @@ module bch_encode #(
 		end
 
 	end
+
 endmodule

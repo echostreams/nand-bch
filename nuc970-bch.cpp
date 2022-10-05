@@ -686,8 +686,8 @@ int libbch_verify_pages()
 	int i;
 	int page, field_index;
 	struct bch_control* bch = bch_init(15, 4, 0x8003, false);
-	if (!bch)
-		return -1;
+	
+	assert(bch);
 
 	for (page = 0; page < sizeof(test_pages) / sizeof(uint8_t*); page++) {
 		for (field_index = 0; field_index < 4; field_index++) {
@@ -786,7 +786,7 @@ int main(int argc, char** argv)
 	//correct_pages();
 	//decode_test(nuc970_nand_sample_page3);
 
-	//libbch_verify_pages(); // working
-	libbch_decode_test(nuc970_nand_sample_page3);
+	libbch_verify_pages(); // working
+	//libbch_decode_test(nuc970_nand_sample_page3);
 	return 0;
 }

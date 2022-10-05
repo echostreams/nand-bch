@@ -645,6 +645,32 @@ int main(int argc, char* argv[])
     assert(test_ecc3[8] == 0x51);
     bch_free(bch3);
 
+    //DATA_BITS = 4288, T = 4, BITS = 8, GP(2 ^ 15)
+    struct bch_control* bch4 = bch_init(15, 4, 0, false);   // 0x8003
+
+    uint8_t test_ecc4[8];
+    memset(test_ecc4, 0x00, 8);
+    uint8_t test_data4[512 + 24];    
+    for (i = 0; i < 512; i++)
+        test_data4[i] = 0xff;
+    for (i = 512; i < 512 + 24; i++)
+        test_data4[i] = 0x00;
+
+    bch_encode(bch4, test_data4, 512 + 24, test_ecc4);
+    for (int j = 0; j < 8; j++)
+        printf(" %02x", test_ecc4[j]);
+    printf("\n");
+    //0xd3, 0x2b, 0x9f, 0x9f, 0x24, 0x73, 0x54, 0xc0
+    assert(test_ecc4[0] == 0xd3);
+    assert(test_ecc4[1] == 0x2b);
+    assert(test_ecc4[2] == 0x9f);
+    assert(test_ecc4[3] == 0x9f);
+    assert(test_ecc4[4] == 0x24);
+    assert(test_ecc4[5] == 0x73);
+    assert(test_ecc4[6] == 0x54);
+    assert(test_ecc4[7] == 0xc0);
+    bch_free(bch4);
+
 	return 0;
 }
 
