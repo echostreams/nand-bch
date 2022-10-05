@@ -42,6 +42,13 @@ module nuc970_decoder_tb;
     wire [7:0] err_cnt;
     wire err_last;
 
+    wire [7:0] corrected;
+    wire [7:0] ecc_out;
+    reg [7:0] err_out2;
+    reg [7:0] err_out3;
+    reg ecc_start;
+    assign corrected = ecc_out ^ err_out2;
+
     initial begin
         clk = 0;
         ce = 1;
@@ -71,20 +78,7 @@ module nuc970_decoder_tb;
         .b_out(dec_in),
         .start_out(dec_start)
     );
-/*
-    nuc970_encode #(.T(4),.DATA_BITS(4288),.BITS(8),.PIPELINE_STAGES(0)) encoder(
-        .clk_in(clk),
-        .data_in(enc_in),
-        .start(enc_start),
-        .ce(ce),
-        .ready(ready),
-        .data_out(data_out),
-        .first(first),
-        .last(last),
-        .data_bits(data_bits),
-        .ecc_bits(ecc_bits)
-    );
-*/
+
     nuc970_decoder #(
         .T(4),
 	    .DATA_BITS(4348),
@@ -104,6 +98,14 @@ module nuc970_decoder_tb;
         .err_last(err_last)
     );
 
+    buff #(4348,8) buff_correction (
+        .clk(clk),
+        .start_in(first_out),
+        .b_in(data),
+        .b_out(ecc_out),
+        .start_out()
+    );
+
     always #5 clk = !clk;
 
     initial begin
@@ -114,17 +116,25 @@ module nuc970_decoder_tb;
 
     always @(posedge clk)
 	begin
+        err_out2 <= err_out;
+        err_out3 <= err_out2;
 		//if (data_bits)
 		//	$display("data: %02x", data_out);
 		if (ecc_bits)
 			$display("ecc:  %02x", data_out);
 		if (err_last)
-			$finish();
+			#5 $finish();
         //$display("err_out: %x, first_out: %x, dec_start: %x, dec_in: %x", 
         //    err_out, first_out, dec_start, dec_in
         //);
-        if (err_out != 8'hff && err_out != 8'h00)
-            $display("err_out: %x", err_out);
+        //if (err_out != 8'hff && err_out != 8'h00)
+        //    $display("err_out: %x", err_out);
 
+        if (first_out) begin
+            ecc_start <= 1;
+        end
+
+        if (ecc_start)
+            $write("%02x", corrected);
 	end
 endmodule

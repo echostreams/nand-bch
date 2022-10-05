@@ -96,8 +96,8 @@ module nuc970_decoder #(
 
 		if (err_start) begin
 			err_count_rd_pos <= #TCQ (err_count_rd_pos + 1);
-			if (err)
-				$display(" err_count_rd_pos: %d", err_count_rd_pos);
+			//if (err)
+			//	$display(" err_count_rd_pos: %d", err_count_rd_pos);
 		end
 	end
 
