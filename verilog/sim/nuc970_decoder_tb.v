@@ -113,23 +113,21 @@ module nuc970_decoder_tb;
 	    $dumpvars(0);
     end
 
+    always @(posedge clk) begin
+        if (err_last) begin
+			#50;
+            $finish();
+        end
+    end
 
     always @(posedge clk)
 	begin
         err_out2 <= err_out;
         err_out3 <= err_out2;
-		//if (data_bits)
-		//	$display("data: %02x", data_out);
+
 		if (ecc_bits)
 			$display("ecc:  %02x", data_out);
-		if (err_last)
-			#5 $finish();
-        //$display("err_out: %x, first_out: %x, dec_start: %x, dec_in: %x", 
-        //    err_out, first_out, dec_start, dec_in
-        //);
-        //if (err_out != 8'hff && err_out != 8'h00)
-        //    $display("err_out: %x", err_out);
-
+		
         if (first_out) begin
             ecc_start <= 1;
         end

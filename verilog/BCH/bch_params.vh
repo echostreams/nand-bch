@@ -23,7 +23,7 @@ begin
 	min_mt = log2(target_t * 4);
 	min_mb = log2(data_bits + 1);
 	m = min_mt > min_mb ? min_mt : min_mb;
-	//$display("mt: %d, mb: %d", min_mt, min_mb);
+
 	done = 0;
 	while (!done && m <= `MAX_M) begin
 		syn_no = 1;
