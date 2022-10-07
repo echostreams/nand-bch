@@ -50,6 +50,7 @@ module nuc970_decoder #(
 		.O(clk)
 	);
 */
+	/* Process syndromes */
 	bch_syndrome #(BCH_PARAMS, BITS, SYN_REG_RATIO, SYN_PIPELINE_STAGES) u_bch_syndrome(
 		.clk(clk_in),
 		.start(start),
@@ -59,7 +60,10 @@ module nuc970_decoder #(
 		.done(syn_done)
 	);
 
-	bch_sigma_bma_serial #(BCH_PARAMS) u_bma (
+	// nuc970_decoder_tb.v $readtime result: serial=11705000, parallel=11115000
+
+	//bch_sigma_bma_serial #(BCH_PARAMS) u_bma (
+	bch_sigma_bma_parallel #(BCH_PARAMS) u_bma (
 		.clk(clk_in),
 		.start(syn_done && key_ready),
 		.ready(key_ready),
@@ -69,7 +73,7 @@ module nuc970_decoder #(
 		.ack_done(1'b1),
 		.err_count(err_count)
 	);
-
+	/* Locate errors */
 	bch_error_tmec #(BCH_PARAMS, BITS, ERR_REG_RATIO, ERR_PIPELINE_STAGES, ACCUM) u_error_tmec(
 		.clk(clk_in),
 		.start(key_done),

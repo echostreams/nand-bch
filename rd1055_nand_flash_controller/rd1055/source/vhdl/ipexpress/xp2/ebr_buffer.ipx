@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="ebr_buffer" module="ebr_buffer" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2014 11 10 23:18:02.292" version="7.4" type="Module" synthesis="synplify" source_format="VHDL">
+  <Package>
+		<File name="" type="" modified="2014 11 10 23:18:02.183"/>
+		<File name="ebr_buffer.lpc" type="lpc" modified="2014 11 10 23:18:00.826"/>
+		<File name="ebr_buffer.vhd" type="top_level_vhdl" modified="2014 11 10 23:18:00.888"/>
+		<File name="ebr_buffer_tmpl.vhd" type="template_vhdl" modified="2014 11 10 23:18:00.888"/>
+		<File name="tb_ebr_buffer_tmpl.vhd" type="testbench_vhdl" modified="2014 11 10 23:18:00.888"/>
+  </Package>
+</DiamondModule>

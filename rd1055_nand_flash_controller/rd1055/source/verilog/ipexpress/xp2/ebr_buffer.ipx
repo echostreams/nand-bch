@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="ebr_buffer" module="RAM_DP_TRUE" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2014 11 10 23:18:23.691" version="7.4" type="Module" synthesis="synplify" source_format="Verilog">
+  <Package>
+		<File name="" type="" modified="2014 11 10 23:18:23.691"/>
+		<File name="ebr_buffer.lpc" type="lpc" modified="2014 11 10 23:18:21.829"/>
+		<File name="ebr_buffer.v" type="top_level_verilog" modified="2014 11 10 23:18:21.891"/>
+		<File name="ebr_buffer_tmpl.v" type="template_verilog" modified="2014 11 10 23:18:21.891"/>
+		<File name="tb_ebr_buffer_tmpl.v" type="testbench_verilog" modified="2014 11 10 23:18:21.891"/>
+  </Package>
+</DiamondModule>

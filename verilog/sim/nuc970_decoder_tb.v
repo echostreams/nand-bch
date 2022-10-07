@@ -45,11 +45,11 @@ module nuc970_decoder_tb;
     wire [7:0] corrected;
     wire [7:0] ecc_out;
     reg [7:0] err_out2;
-    reg [7:0] err_out3;
     reg ecc_start;
     assign corrected = ecc_out ^ err_out2;
 
     initial begin
+        $display("T = %0t", $realtime);
         clk = 0;
         ce = 1;
         start = 0;
@@ -116,6 +116,7 @@ module nuc970_decoder_tb;
     always @(posedge clk) begin
         if (err_last) begin
 			#50;
+            $display("T = %0t", $realtime);
             $finish();
         end
     end
@@ -123,13 +124,13 @@ module nuc970_decoder_tb;
     always @(posedge clk)
 	begin
         err_out2 <= err_out;
-        err_out3 <= err_out2;
 
 		if (ecc_bits)
 			$display("ecc:  %02x", data_out);
 		
         if (first_out) begin
             ecc_start <= 1;
+            start <= 1;
         end
 
         if (ecc_start)

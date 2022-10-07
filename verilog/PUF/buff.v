@@ -35,7 +35,7 @@ module buff #(
     localparam IDLE=0, STARTS=1;
     localparam COUNT = DATA_BITS/BITS;
     
-    reg [7:0] counter;
+    reg [16:0] counter;
     reg [DATA_BITS-1:0] temp;
 
     always @(posedge clk) begin
@@ -47,8 +47,10 @@ module buff #(
                     state <= STARTS;
                     start_out <= 1'b1;
                     temp <= b_in;
-                end else
+                end else begin
                     state <= IDLE;
+                    temp <= 0;
+                end
             end
             STARTS: begin
                 start_out <= 0;

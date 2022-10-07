@@ -1,0 +1,1 @@
+iverilog ..\..\source\verilog\ACounter.v ..\..\source\verilog\ErrLoc.v ..\..\source\verilog\H_gen.v ..\..\source\verilog\MFSM.v ..\..\source\verilog\TFSM.v ..\..\source\verilog\ebr_buffer.v ..\..\source\verilog\nfcm_top.v flash_interface.v nfcm_tb.v

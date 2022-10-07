@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="ebr_buffer" module="RAM_DP_TRUE" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2014 11 10 22:22:03.176" version="7.4" type="Module" synthesis="synplify" source_format="VHDL">
+  <Package>
+		<File name="" type="" modified="2014 11 10 22:22:03.176"/>
+		<File name="ebr_buffer.lpc" type="lpc" modified="2014 11 10 22:22:01.647"/>
+		<File name="ebr_buffer.vhd" type="top_level_vhdl" modified="2014 11 10 22:22:01.694"/>
+		<File name="ebr_buffer_tmpl.vhd" type="template_vhdl" modified="2014 11 10 22:22:01.694"/>
+		<File name="tb_ebr_buffer_tmpl.vhd" type="testbench_vhdl" modified="2014 11 10 22:22:01.709"/>
+  </Package>
+</DiamondModule>
